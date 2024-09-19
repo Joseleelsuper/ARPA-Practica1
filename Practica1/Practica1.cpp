@@ -9,6 +9,13 @@ constexpr int TAG = 0;
 using namespace std;
 
 int main(int argc, char* argv[]) {
+
+	// Comprobar que el rango del proceso Emisor es menor que el rango del proceso Receptor
+    if (RANK_EMISOR > RANK_RECEPTOR) {
+		printf("El proceso Emisor tiene un rango menor que el proceso Receptor.\n");
+        return 1;
+    }
+
 	// Inicializar MPI
     MPI_Init(&argc, &argv);
 
@@ -18,6 +25,7 @@ int main(int argc, char* argv[]) {
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &size);
 
+
 	// Comprobar que hay al menos dos procesos; Emisor y Receptor
     if (size < RANK_RECEPTOR+1) {
 		printf("Se necesitan al menos %d procesos para ejecutar el programa.\n", RANK_RECEPTOR+1);
@@ -25,30 +33,33 @@ int main(int argc, char* argv[]) {
         MPI_Abort(MPI_COMM_WORLD, 1);
     }
 
+
     if (rank == RANK_EMISOR) {
         long double dato = 0;
-		printf("Introduce un número: ");
-		cin >> dato;
-		// Enviar el dato al proceso Receptor
+        printf("Introduce un número: ");
+        cin >> dato;
+        // Enviar el dato al proceso Receptor
         MPI_Send(&dato, NUM_DATOS, MPI_LONG_DOUBLE, RANK_RECEPTOR, TAG, MPI_COMM_WORLD);
         printf("El Proceso %d ha enviado el dato '%.2lf' al proceso %d.\n", rank, dato, RANK_RECEPTOR);
     }
     else if (rank == RANK_RECEPTOR) {
         long double dato = 0;
-		// Recibir el dato del proceso Emisor
+        // Recibir el dato del proceso Emisor
         MPI_Recv(&dato, NUM_DATOS, MPI_LONG_DOUBLE, RANK_EMISOR, TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-		printf("El Proceso %d ha recibido el dato '%.2lf' del proceso %d.\n", rank, dato, RANK_EMISOR);
+        printf("El Proceso %d ha recibido el dato '%.2lf' del proceso %d.\n", rank, dato, RANK_EMISOR);
     }
 
 	// Finalizar MPI
     MPI_Finalize();
     return 0;
 }
+
 /*
  ¿Cómo se podría enviar el mismo dato a varios procesos?
 
  Para enviar el mismo dato a varios procesos, se puede utilizar la función MPI_Bcast, que permite enviar un dato desde un proceso a todos los demás procesos en un comunicador.
  */
+
 /*
  ¿Qué orden  de  recepción  se prevé que existiría: por  rango, por proximidad geográfica, por
 orden de programa...?

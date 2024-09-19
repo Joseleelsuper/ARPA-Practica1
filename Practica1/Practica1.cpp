@@ -12,7 +12,7 @@ int main(int argc, char* argv[]) {
 
 	// Comprobar que el rango del proceso Emisor es menor que el rango del proceso Receptor
     if (RANK_EMISOR > RANK_RECEPTOR) {
-		printf("El proceso Emisor tiene un rango menor que el proceso Receptor.\n");
+		printf("Error: El proceso Emisor tiene un rango mayor que el proceso Receptor. (%d > %d)\n", RANK_EMISOR, RANK_RECEPTOR);
         return 1;
     }
 
@@ -28,7 +28,7 @@ int main(int argc, char* argv[]) {
 
 	// Comprobar que hay al menos dos procesos; Emisor y Receptor
     if (size < RANK_RECEPTOR+1) {
-		printf("Se necesitan al menos %d procesos para ejecutar el programa.\n", RANK_RECEPTOR+1);
+		printf("Error: Se necesitan al menos %d procesos para ejecutar el programa.\n", RANK_RECEPTOR+1);
 		// Finalizar MPI con códgio de error 1
         MPI_Abort(MPI_COMM_WORLD, 1);
     }
